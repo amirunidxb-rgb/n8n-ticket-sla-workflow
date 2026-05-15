@@ -1,0 +1,431 @@
+{
+  "name": "Ticket",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Ticket",
+        "formDescription": "Submit your problem please.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Issue Title",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Description",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Priority",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Low"
+                  },
+                  {
+                    "option": "Mediume"
+                  },
+                  {
+                    "option": "High"
+                  },
+                  {
+                    "option": "Critical"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0ab1aed6-2e0b-4e64-a258-b502199fafbd",
+      "name": "On form submission",
+      "webhookId": "[REMOVED]"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dcab3dea-de3d-4425-bbf5-3daf478e9b7e",
+              "name": "ticket_id",
+              "value": "={{ 'TCK-' + Date.now() }}",
+              "type": "string"
+            },
+            {
+              "id": "6cb0ac1b-6cc3-4a81-9d15-db56cc867efb",
+              "name": "Status",
+              "value": "Open",
+              "type": "string"
+            },
+            {
+              "id": "b926c7d9-7769-427f-87de-111dabe704db",
+              "name": "sla_minutes",
+              "value": "={{ \n  $json.Priority === 'Critical' ? 30 :\n  $json.Priority === 'High' ? 75 :\n  $json.Priority === 'Medium' ? 120 :\n  180\n}}",
+              "type": "number"
+            },
+            {
+              "id": "375f32e1-4af1-4a4c-9880-cfa263575b17",
+              "name": "created_at",
+              "value": "={{ new Date().toISOString() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "7b9645b0-525d-4d14-9b8b-c4075003580e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": "[REMOVED]",
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "[REMOVED]"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ticket-id": "={{ $json.ticket_id }}",
+            "name": "={{ $('On form submission').item.json.Name }}",
+            "email": "={{ $('On form submission').item.json.Email }}",
+            "issue-title": "={{ $('On form submission').item.json['Issue Title'] }}",
+            "description": "={{ $('On form submission').item.json.Description }}",
+            "priority": "={{ $('On form submission').item.json.Priority }}",
+            "status": "={{ $json.Status }}",
+            "sla_minutes": "={{ $json.sla_minutes }}",
+            "created_at": "={{ $json.created_at }}",
+            "resolved": "false"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ticket-id",
+              "displayName": "ticket-id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue-title",
+              "displayName": "issue-title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "priority",
+              "displayName": "priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sla_minutes",
+              "displayName": "sla_minutes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "resolved",
+              "displayName": "resolved",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        0
+      ],
+      "id": "ba9ff36f-907e-49b2-adfa-c9dbbd52cba7",
+      "name": "Append row in sheet",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "amount": "={{ Number($json.sla_minutes) }}",
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "80ee21cc-9918-4760-aaf6-97dface6a48d",
+      "name": "Wait",
+      "webhookId": "[REMOVED]"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": "[REMOVED]",
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "[REMOVED]"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "ticket-id",
+              "lookupValue": "={{ $json['ticket-id'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        0
+      ],
+      "id": "c0f7c4a4-c0ce-435e-8c31-a047c194a6e6",
+      "name": "Get row(s) in sheet",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "70f18210-c842-47ee-9680-b35fd9f034f8",
+              "leftValue": "={{ $json.resolved }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "a4a264aa-837e-4a15-b4fa-634a01b7ef90",
+      "name": "Check unresolved"
+    },
+    {
+      "parameters": {
+        "sendTo": "barmaramirali@gmail.com",
+        "subject": "=SLA Alert: Ticket {{ $json[\"ticket-id\"] }} is still unresolved",
+        "emailType": "text",
+        "message": "=Ticket SLA expired and is still unresolved. \nTicket ID: {{ $json[\"ticket-id\"] }} \nPriority: {{ $json.priority }} \nIssue: {{ $json[\"issue-title\"] }} \nDescription: {{ $json.description }} \nCustomer: {{ $json.name }} \nEmail: {{ $json.email }} \nCreated At: {{ $json.created_at }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1328,
+        -96
+      ],
+      "id": "00fac0aa-2f37-4cf7-946e-c74f65f51170",
+      "name": "Send a message",
+      "webhookId": "[REMOVED]",
+      "credentials": {}
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "Name": "Amir",
+          "Email": "barmaramirali@gmail.com",
+          "Issue Title": "Network error",
+          "Description": "server is down",
+          "Priority": "Critical",
+          "submittedAt": "2026-05-11T15:51:20.266-04:00",
+          "formMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Check unresolved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check unresolved": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d5c94e86-b096-4964-b741-9f764440e13e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "[REMOVED]"
+  },
+  "id": "QrLkFPwibPkRPHtw",
+  "tags": []
+}
